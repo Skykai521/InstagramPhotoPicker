@@ -26,4 +26,9 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.2.0'
     testCompile 'junit:junit:4.12'
+
+    compile 'com.bilibili:boxing:0.3.5'
+    compile 'com.bilibili:boxing-impl:0.3.5'
+
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }

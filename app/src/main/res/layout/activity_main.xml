@@ -10,8 +10,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.github.skykai.MainActivity">
 
-    <TextView
+    <Button
+        android:id="@+id/btn_pick_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_centerHorizontal="true"
+        android:text="Pick Photo" />
 </RelativeLayout>
