@@ -15,7 +15,7 @@
  *
  */
 
-package com.github.skykai;
+package com.github.skykai.util;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -26,6 +26,7 @@ import com.bilibili.boxing.loader.IBoxingMediaLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.skykai.R;
 
 /**
  * use https://github.com/bumptech/glide as media loader.

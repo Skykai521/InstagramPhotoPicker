@@ -1,4 +1,4 @@
-package com.github.skykai;
+package com.github.skykai.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,8 +8,9 @@ import android.support.annotation.Nullable;
 
 import com.bilibili.boxing.AbsBoxingActivity;
 import com.bilibili.boxing.AbsBoxingViewFragment;
+import com.bilibili.boxing.model.config.BoxingConfig;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.bilibili.boxing_impl.ui.BoxingViewFragment;
+import com.github.skykai.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 
 public class PhotoPickerActivity extends AbsBoxingActivity {
-    private BoxingViewFragment mPickerFragment;
+    private PhotoPickerFragment pickerFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,12 +31,14 @@ public class PhotoPickerActivity extends AbsBoxingActivity {
     @NonNull
     @Override
     public AbsBoxingViewFragment onCreateBoxingView(ArrayList<BaseMedia> medias) {
-        mPickerFragment = (BoxingViewFragment) getSupportFragmentManager().findFragmentByTag(BoxingViewFragment.TAG);
-        if (mPickerFragment == null) {
-            mPickerFragment = (BoxingViewFragment) BoxingViewFragment.newInstance().setSelectedBundle(medias);
-            getSupportFragmentManager().beginTransaction().replace(R.id.container_layout, mPickerFragment, BoxingViewFragment.TAG).commit();
+        pickerFragment = (PhotoPickerFragment) getSupportFragmentManager().findFragmentByTag(PhotoPickerFragment.TAG);
+        if (pickerFragment == null) {
+            BoxingConfig config = new BoxingConfig(BoxingConfig.Mode.SINGLE_IMG);
+            pickerFragment = PhotoPickerFragment.newInstance();
+            pickerFragment.setPickerConfig(config);
+            getSupportFragmentManager().beginTransaction().replace(R.id.container_layout, pickerFragment, PhotoPickerFragment.TAG).commit();
         }
-        return mPickerFragment;
+        return pickerFragment;
     }
 
     @Override

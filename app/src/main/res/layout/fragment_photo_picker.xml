@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.github.skykai.view.CoordinatorLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:elevation="2dp"
+        app:theme="@style/ToolbarTheme">
+
+        <TextView
+            android:id="@+id/album_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:drawablePadding="8dp"
+            android:drawableRight="@drawable/abc_spinner_mtrl_am_alpha"
+            android:gravity="center_vertical"
+            android:text="@string/default_album" />
+    </android.support.v7.widget.Toolbar>
+
+    <uk.co.senab.photoview.PhotoView
+        android:id="@+id/photo_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.github.skykai.view.CoordinatorRecyclerView
+        android:id="@+id/photo_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+
+</com.github.skykai.view.CoordinatorLinearLayout>
