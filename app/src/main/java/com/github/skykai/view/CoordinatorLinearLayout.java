@@ -10,21 +10,17 @@ import android.widget.OverScroller;
  * Created by sky on 17/3/1.
  */
 public class CoordinatorLinearLayout extends LinearLayout implements CoordinatorListener {
-    private static final String TAG = "CoordinatorLinearLayout";
     public static int DEFAULT_DURATION = 500;
-    public int mState = WHOLE_STATE;
-    //顶部View高度
-    private int mTopViewHeight;
-    //最大滑动距离
-    private int mMaxScrollDistance;
-    //滑动到顶部时TopView还剩余的高度
-    private int mTopBarHeight;
-    private OverScroller mScroller;
-    private Context mContext;
-    private boolean mIsBeingDragged = false;
-    private int mMinScrollToTop;
-    private int mMinScrollToWhole;
-    private float mLastPositionY;
+    private int state = WHOLE_STATE;
+    private int topBarHeight;
+    private int topViewHeight;
+    private int minScrollToTop;
+    private int minScrollToWhole;
+    private int maxScrollDistance;
+    private float lastPositionY;
+    private boolean beingDragged;
+    private Context context;
+    private OverScroller scroller;
 
     public CoordinatorLinearLayout(Context context) {
         this(context, null);
@@ -36,20 +32,20 @@ public class CoordinatorLinearLayout extends LinearLayout implements Coordinator
 
     public CoordinatorLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.mContext = context;
+        this.context = context;
         init();
     }
 
     private void init() {
-        mScroller = new OverScroller(mContext);
+        scroller = new OverScroller(context);
     }
 
     public void setTopViewParam(int topViewHeight, int topBarHeight) {
-        this.mTopViewHeight = topViewHeight;
-        this.mTopBarHeight = topBarHeight;
-        this.mMaxScrollDistance = mTopViewHeight - mTopBarHeight;
-        this.mMinScrollToTop = mTopBarHeight;
-        this.mMinScrollToWhole = mMaxScrollDistance - mTopBarHeight;
+        this.topViewHeight = topViewHeight;
+        this.topBarHeight = topBarHeight;
+        this.maxScrollDistance = this.topViewHeight - this.topBarHeight;
+        this.minScrollToTop = this.topBarHeight;
+        this.minScrollToWhole = maxScrollDistance - this.topBarHeight;
     }
 
     @Override
@@ -58,8 +54,8 @@ public class CoordinatorLinearLayout extends LinearLayout implements Coordinator
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 int y = (int) ev.getY();
-                mLastPositionY = y;
-                if (mState == TOP_STATE && y < mTopBarHeight) {
+                lastPositionY = y;
+                if (state == COLLAPSE_STATE && y < topBarHeight) {
                     return true;
                 }
                 break;
@@ -73,18 +69,18 @@ public class CoordinatorLinearLayout extends LinearLayout implements Coordinator
         final int y = (int) ev.getRawY();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                mLastPositionY = y;
+                lastPositionY = y;
                 break;
             case MotionEvent.ACTION_MOVE:
-                int deltaY = (int) (mLastPositionY - y);
-                if (mState == TOP_STATE && deltaY < 0) {
-                    mIsBeingDragged = true;
-                    setScrollY(mMaxScrollDistance + deltaY);
+                int deltaY = (int) (lastPositionY - y);
+                if (state == COLLAPSE_STATE && deltaY < 0) {
+                    beingDragged = true;
+                    setScrollY(maxScrollDistance + deltaY);
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                if (mIsBeingDragged) {
+                if (beingDragged) {
                     onSwitch();
                     return true;
                 }
@@ -95,31 +91,29 @@ public class CoordinatorLinearLayout extends LinearLayout implements Coordinator
 
     @Override
     public boolean onCoordinateScroll(int x, int y, int deltaX, int deltaY, boolean isScrollToTop) {
-        if (y < mTopViewHeight && mState == WHOLE_STATE && getScrollY() < getScrollRange()) {
-            //Log.d(TAG, "getScrollY : " + getScrollY() + " getScrollRange : " + getScrollRange());
-            mIsBeingDragged = true;
-            setScrollY(mTopViewHeight - y);
+        if (y < topViewHeight && state == WHOLE_STATE && getScrollY() < getScrollRange()) {
+            beingDragged = true;
+            setScrollY(topViewHeight - y);
             return true;
-        }  else if (isScrollToTop && mState == TOP_STATE && deltaY < 0) {
-            mIsBeingDragged = true;
-            setScrollY(mMaxScrollDistance + deltaY);
+        } else if (isScrollToTop && state == COLLAPSE_STATE && deltaY < 0) {
+            beingDragged = true;
+            setScrollY(maxScrollDistance + deltaY);
             return true;
-        }  else {
+        } else {
             return false;
         }
     }
 
     @Override
     public void onSwitch() {
-        //Log.d(TAG, "onSwitch , mState : " + mState);
-        if (mState == WHOLE_STATE) {
-            if (getScrollY() >= mMinScrollToTop) {
+        if (state == WHOLE_STATE) {
+            if (getScrollY() >= minScrollToTop) {
                 switchToTop();
             } else {
                 switchToWhole();
             }
-        } else if (mState == TOP_STATE) {
-            if (getScrollY() <= mMinScrollToWhole) {
+        } else if (state == COLLAPSE_STATE) {
+            if (getScrollY() <= minScrollToWhole) {
                 switchToWhole();
             } else {
                 switchToTop();
@@ -129,39 +123,38 @@ public class CoordinatorLinearLayout extends LinearLayout implements Coordinator
 
     @Override
     public boolean isBeingDragged() {
-        return mIsBeingDragged;
+        return beingDragged;
     }
 
     public void switchToWhole() {
-        if (!mScroller.isFinished()) {
-            mScroller.abortAnimation();
+        if (!scroller.isFinished()) {
+            scroller.abortAnimation();
         }
-        mScroller.startScroll(0, getScrollY(), 0, - getScrollY(), DEFAULT_DURATION);
+        scroller.startScroll(0, getScrollY(), 0, -getScrollY(), DEFAULT_DURATION);
         postInvalidate();
-        mState = WHOLE_STATE;
-        mIsBeingDragged = false;
+        state = WHOLE_STATE;
+        beingDragged = false;
     }
 
     public void switchToTop() {
-        if (!mScroller.isFinished()) {
-            mScroller.abortAnimation();
+        if (!scroller.isFinished()) {
+            scroller.abortAnimation();
         }
-        mScroller.startScroll(0, getScrollY(), 0, getScrollRange() - getScrollY(), DEFAULT_DURATION);
+        scroller.startScroll(0, getScrollY(), 0, getScrollRange() - getScrollY(), DEFAULT_DURATION);
         postInvalidate();
-        mState = TOP_STATE;
-        mIsBeingDragged = false;
+        state = COLLAPSE_STATE;
+        beingDragged = false;
     }
 
     @Override
     public void computeScroll() {
-
-        if (mScroller.computeScrollOffset()) {
-            setScrollY(mScroller.getCurrY());
+        if (scroller.computeScrollOffset()) {
+            setScrollY(scroller.getCurrY());
             postInvalidate();
         }
     }
 
     private int getScrollRange() {
-        return mMaxScrollDistance;
+        return maxScrollDistance;
     }
 }

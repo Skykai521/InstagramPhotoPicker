@@ -11,9 +11,9 @@ import android.view.MotionEvent;
  * Created by sky on 17/3/1.
  */
 public class CoordinatorRecyclerView extends RecyclerView {
-    private float downPositionY;
     private int dragDistanceY;
     private boolean scrollTop;
+    private float downPositionY;
     private CoordinatorListener coordinatorListener;
 
     public CoordinatorRecyclerView(Context context) {
@@ -64,15 +64,12 @@ public class CoordinatorRecyclerView extends RecyclerView {
         return super.onTouchEvent(ev);
     }
 
-    //FIX not enough
     private boolean isScrollTop(MotionEvent ev) {
         LayoutManager layoutManager = getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
-
             if (gridLayoutManager.findFirstVisibleItemPosition() == 0 &&
                     gridLayoutManager.findViewByPosition(0).getTop() == gridLayoutManager.getTopDecorationHeight(gridLayoutManager.findViewByPosition(0))) {
-
                 if (!scrollTop) {
                     dragDistanceY = (int) (downPositionY - ev.getRawY());
                     scrollTop = true;

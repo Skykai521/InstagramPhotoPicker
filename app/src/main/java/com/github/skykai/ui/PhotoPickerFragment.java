@@ -31,12 +31,12 @@ public class PhotoPickerFragment extends AbsBoxingViewFragment {
     public static final String TAG = "com.github.skykai.ui.PhotoPickerFragment";
     private static final int GRID_COUNT = 3;
     private static final int TOP_REMAIN_HEIGHT = 48;
-    private BoxingMediaAdapter mediaAdapter;
     private Toolbar toolbar;
+    private PhotoView photoView;
+    private TextView albumTextView;
     private CoordinatorLinearLayout parentLayout;
     private CoordinatorRecyclerView photoRecyclerView;
-    private TextView albumTextView;
-    private PhotoView photoView;
+    private BoxingMediaAdapter mediaAdapter;
 
     public static PhotoPickerFragment newInstance() {
         return new PhotoPickerFragment();
@@ -100,6 +100,7 @@ public class PhotoPickerFragment extends AbsBoxingViewFragment {
         gridLayoutManager.setSmoothScrollbarEnabled(true);
         photoRecyclerView.setLayoutManager(gridLayoutManager);
         photoRecyclerView.addItemDecoration(new SpacesItemDecoration(getResources().getDimensionPixelOffset(com.bilibili.boxing_impl.R.dimen.media_margin), GRID_COUNT));
+        mediaAdapter.setOnMediaClickListener(new OnMediaClickListener());
         photoRecyclerView.setAdapter(mediaAdapter);
     }
 
@@ -107,8 +108,18 @@ public class PhotoPickerFragment extends AbsBoxingViewFragment {
     public void showMedia(@Nullable List<BaseMedia> medias, int allCount) {
         if (medias == null || medias.size() == 0) return;
         mediaAdapter.addAllData(medias);
+        displayPhoto(medias.get(0));
+    }
 
-        BaseMedia media = medias.get(0);
+    private class OnMediaClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            displayPhoto((BaseMedia) v.getTag());
+        }
+    }
+
+    private void displayPhoto(BaseMedia media) {
         String path = media.getPath();
         BoxingMediaLoader.getInstance().displayRaw(photoView, path, null);
     }
