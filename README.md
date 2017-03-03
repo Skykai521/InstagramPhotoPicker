@@ -4,7 +4,7 @@ Photo picker feture like Instagram
 
 
 ## Sample
-![](./gif/screenshot.gif)
+<img src="./gif/screenshot.gif" width="30%" height="30%">
 
 
 ##Thanks
