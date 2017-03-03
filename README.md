@@ -3,9 +3,9 @@
 Photo picker feture like Instagram
 
 
-## Sample Video
+## Sample
 ![](./gif/screenshot.gif)
 
 
-#Thanks
+##Thanks
 - [boxing](https://github.com/Bilibili/boxing)
